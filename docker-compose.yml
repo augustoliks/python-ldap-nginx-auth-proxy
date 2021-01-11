@@ -1,0 +1,41 @@
+version: "3.7"
+
+services:
+  nginx:
+    container_name: nginx
+#    depends_on:
+#      - ws-auth-form
+#      - ws-ldap-check-credentials
+#      - backend
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    network_mode: host
+    expose:
+      - 8081
+#    ports:
+#      - 8081:8081
+
+#  ws-auth-form:
+#    container_name: ws-auth-form
+#    build:
+#      context: ./ws-auth-form
+#      dockerfile: Dockerfile
+#    ports:
+#      - 5001:5001
+#
+#  ws-ldap-check-credentials:
+#    container_name: ws-ldap-check-credentials
+#    build:
+#      context: ./ws-ldap-check-credentials
+#      dockerfile: Dockerfile
+#    ports:
+#      - 5002:5002
+#
+#  backend:
+#    container_name: backend
+#    build:
+#      context: ./backend-sample
+#      dockerfile: Dockerfile
+#    ports:
+#      - 5003:5003
