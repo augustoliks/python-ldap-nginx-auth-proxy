@@ -1,5 +1,7 @@
 import ldapauth
 import json
+import security
+import base64
 from flask import (
     make_response,
     request,
@@ -30,9 +32,9 @@ def configure_routes(app: Flask):
             bind_passwd=request.headers['X-Ldap-BindPass'],
             base_dn=request.headers['X-Ldap-BaseDN'],
             search_filter=request.headers['X-Ldap-SearchFilter'],
-            disable_referrals=request.headers['X-Ldap-DisableReferrals'],
-            starttls=request.headers['X-Ldap-Starttls'],
-            realm=request.headers['X-Ldap-Realm']
+            # disable_referrals=request.headers['X-Ldap-DisableReferrals'],
+            # starttls=request.headers['X-Ldap-Starttls'],
+            # realm=request.headers['X-Ldap-Realm']
         )
         auth_cookie_name = request.headers['X-AuthCookieName']
         auth_cookie = request.cookies[auth_cookie_name]
@@ -40,9 +42,9 @@ def configure_routes(app: Flask):
         if not auth_cookie:
             raise RuntimeError('user not is authenticated')
 
-        user, password = ldapauth.retrieve_auth_b64_seal(
-            auth_b64_seal=auth_cookie
-        )
+        seal_encrypted_decode_b64 = base64.b64decode(auth_cookie)
+        seal_decrypted_encode_b64 = security.decrypt(seal_encrypted_decode_b64.decode('utf-8'))
+        user, password = security.unseal_auth_b64(seal_decrypted_encode_b64)
 
         auth_handler = ldapauth.LDAPAuthHandler(ldap_params)
         auth_handler.check_credentials(user, password)

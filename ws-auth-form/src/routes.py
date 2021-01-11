@@ -1,3 +1,4 @@
+import security
 import base64
 from flask import (
     render_template,
@@ -26,9 +27,11 @@ def configure_routes(app: Flask):
         password = request.form['password']
         target = request.form['target']
 
-        auth_seal_b64 = base64.b64encode(f'{username}:{password}'.encode())
+        seal_b64 = security.seal_auth_b64(username, password)
+        seal_encrypted = security.encrypt(seal_b64)
+        seal_encrypted_b64 = base64.b64encode(seal_encrypted.encode('utf-8'))
 
         redirect_response = redirect(target, code=302)
-        redirect_response.set_cookie("nginxauth", auth_seal_b64, httponly=True)
+        redirect_response.set_cookie("nginxauth", seal_encrypted_b64, httponly=True)
 
         return redirect_response

@@ -1,6 +1,6 @@
 flask
-dynaconf
 pydantic
 python-ldap
 loguru
 gunicorn
+pycryptodome
