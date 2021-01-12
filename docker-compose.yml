@@ -1,41 +1,60 @@
 version: "3.7"
 
 services:
-  nginx:
-    container_name: nginx
-#    depends_on:
-#      - ws-auth-form
-#      - ws-ldap-check-credentials
-#      - backend
-    build:
-      context: ./nginx
-      dockerfile: Dockerfile
-    network_mode: host
-    expose:
-      - 8081
+#   nginx:
+#     container_name: nginx
+# #    depends_on:
+# #      - ws-auth-form
+# #      - ws-ldap-check-credentials
+# #      - backend
+#     build:
+#       context: ./nginx
+#     network_mode: host
+#     expose:
+#       - 8081
 #    ports:
 #      - 8081:8081
 
-#  ws-auth-form:
-#    container_name: ws-auth-form
-#    build:
-#      context: ./ws-auth-form
-#      dockerfile: Dockerfile
-#    ports:
-#      - 5001:5001
-#
-#  ws-ldap-check-credentials:
-#    container_name: ws-ldap-check-credentials
-#    build:
-#      context: ./ws-ldap-check-credentials
-#      dockerfile: Dockerfile
-#    ports:
-#      - 5002:5002
-#
-#  backend:
-#    container_name: backend
-#    build:
-#      context: ./backend-sample
-#      dockerfile: Dockerfile
-#    ports:
-#      - 5003:5003
+#   ws-auth-form:
+#     container_name: ws-auth-form
+#     build:
+#       context: ./ws-auth-form
+#     ports:
+#       - 5001:5001
+
+#   ws-ldap-check-credentials:
+#     container_name: ws-ldap-check-credentials
+#     build:
+#       context: ./ws-ldap-check-credentials
+#     ports:
+#       - 5002:5002
+
+#   backend:
+#     container_name: backend
+#     build:
+#       context: ./backend-sample
+#     ports:
+
+  ldap-server:
+    build:
+      context: ./ldap-server
+    environment:
+      LDAP_ADMIN_PASSWORD: test1234
+      LDAP_BASE_DN: dc=shihadeh,dc=intern
+    ports:
+      - 389:389
+    volumes:
+      - ldap_data:/var/lib/ldap
+      - ldap_config:/etc/ldap/slapd.d
+
+  ldap-server-admin:
+    image: osixia/phpldapadmin:0.7.2
+    ports:
+      - 8090:80
+    environment:
+      PHPLDAPADMIN_LDAP_HOSTS: ldap_server
+      PHPLDAPADMIN_HTTPS: 'false'
+
+volumes:
+  ldap_data:
+  ldap_config:
