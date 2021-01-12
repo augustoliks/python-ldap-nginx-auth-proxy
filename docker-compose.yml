@@ -38,14 +38,11 @@ services:
   ldap-server:
     build:
       context: ./ldap-server
-    environment:
-      LDAP_ADMIN_PASSWORD: test1234
-      LDAP_BASE_DN: dc=shihadeh,dc=intern
     ports:
       - 389:389
-    volumes:
-      - ldap_data:/var/lib/ldap
-      - ldap_config:/etc/ldap/slapd.d
+    # volumes:
+    #   - ldap_data:/var/lib/ldap
+    #   - ldap_config:/etc/ldap/slapd.d
 
   ldap-server-admin:
     image: osixia/phpldapadmin:0.7.2
